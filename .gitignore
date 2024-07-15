@@ -1,0 +1,34 @@
+# Ignore build output directories
+target/
+
+# Ignore IDE specific directories
+.idea/
+*.iml
+
+# Ignore BSP specific directory
+.bsp/
+
+# SBT-specific directories (excluding build.sbt)
+project/target/
+project/project/
+
+# Source directory (not typically ignored unless you have generated sources)
+# Uncomment if you have generated sources you want to ignore
+# src_managed/
+# Uncomment if you want to ignore all sources (not recommended)
+# src/
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
+
+# Additional IntelliJ IDEA specific files
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/libraries
+.idea/vcs.xml
+.idea/misc.xml
+.idea/modules.xml
