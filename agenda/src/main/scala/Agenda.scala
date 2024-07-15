@@ -4,21 +4,34 @@ class Agenda(val meetings: List[Meeting]) {
   def printDaySchedule(day: String): Unit = {
     val meetingsForTheDay = meetings.filter(_.day == day)
 
-    if (meetingsForTheDay.isEmpty) {
-      println(s"$day:")
-      println("  No meetings for the day")
-      return
+    meetingsForTheDay match{
+      case Nil =>
+        println(s"$day:")
+        println("  No meetings for the day")
+
+      case meetings =>
+        meetings.foreach { meeting =>
+          val timeOfDay = if (meeting.time.endsWith("pm")) "afternoon" else "morning"
+          println(s"$day $timeOfDay:")
+          println(s"  ${meeting.time}: ${meeting.name}")
+        }
     }
 
-    for (meeting <- meetingsForTheDay) {
-      if (meeting.time.endsWith("pm")) {
-        println(s"$day afternoon:")
-        println(s"  ${meeting.time}: ${meeting.name}")
-      } else {
-        println(s"$day morning:")
-        println(s"  ${meeting.time}: ${meeting.name}")
-      }
-    }
+//    if (meetingsForTheDay.isEmpty) {
+//      println(s"$day:")
+//      println("  No meetings for the day")
+//      return
+//    }
+//
+//    for (meeting <- meetingsForTheDay) {
+//      if (meeting.time.endsWith("pm")) {
+//        println(s"$day afternoon:")
+//        println(s"  ${meeting.time}: ${meeting.name}")
+//      } else {
+//        println(s"$day morning:")
+//        println(s"  ${meeting.time}: ${meeting.name}")
+//      }
+//    }
   }
 }
 
