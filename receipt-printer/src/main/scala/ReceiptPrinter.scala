@@ -15,31 +15,36 @@ class CafeDetails(val shopName: String, val address: String, val phone: String, 
 
 class ReceiptPrinter(val cafe: CafeDetails, val order: Map[String, Int] = Map()) {
 
-  private def findCosts = {
+  private def formatDecimalPlaces(subtotal: Double): String = {
+    f"$subtotal%.2f"
+  }
+
+  private def findCostsDetails = {
     for {
       key <- order.keys
-      price <- cafe.prices.get(key)
       quantity <- order.get(key)
+      price <- cafe.prices.get(key)
     } yield (key, quantity, price, price * quantity)
   }
 
-  //  <!-- OMITTED -->
+  private def formatCostsDetails = findCostsDetails.map {
+    case (key, quantity, price, subtotal) =>
+      s"${key}: ${quantity} x ${price} $$${formatDecimalPlaces(subtotal)}"
+  }.mkString("\n")
+
+  private def calculateTotal = findCostsDetails.map {
+    case (_, _, _, subtotal) => subtotal
+  }.sum
+
+  private def formatTotal = s"Total: $$${formatDecimalPlaces(calculateTotal)}"
+
   def receipt: String = {
-    val shopName = cafe.shopName
-    val address = cafe.address
-    val phoneNumber = cafe.phone
-
-    val items = findCosts.map {
-      case (key, quantity, price, subtotal) =>
-        val formatedSubtotal = f"$subtotal%.2f"
-        s"${key}: ${quantity} x ${price} $$${formatedSubtotal}"
-    }.mkString("\n")
-
     s"""
-       |${shopName}
-       |${address}
-       |${phoneNumber}
-       |${items}
+       |${cafe.shopName}
+       |${cafe.address}
+       |${cafe.phone}
+       |${formatCostsDetails}
+       |${formatTotal}
        |""".stripMargin
   }
 }
