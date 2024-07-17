@@ -94,6 +94,24 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
         till.show should include("Flat White: $4.75")
       }
     }
+    "allow a customer to order an item from the menu" when{
+      "the item exists in the menu" in {
+        val till = new Till(
+          coffeeConnectionCafe
+        )
+        val orderResult = till.order("Cafe Latte")
+        orderResult should include ("Cafe Latte: $4.75")
+      }
+    }
+    "return an error message" when{
+      "the item doesn't exist in the menu" in {
+        val till = new Till(
+          coffeeConnectionCafe
+        )
+        val orderResult = till.order("Hot Chocolate")
+        orderResult should include ("Item not in the menu")
+      }
+    }
   }
 }
 

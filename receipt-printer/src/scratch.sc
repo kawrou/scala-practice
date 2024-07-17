@@ -16,6 +16,11 @@ val menu = Map(
   "Muffin Of The Day" -> 4.55
 )
 
+menu.map{case (x, y) => (x,y)}
+menu.filter{case (x,_) => x=="Cappuccino"}
+def filterMenu(order: String) = menu.filter{case (x,_) => x.contains(order)}.map{case(x,y) => s"$x: $y"}
+filterMenu("Cafe Latte")
+
 val order = Map("Cafe Latte" -> 1, "Flat White" -> 2)
 
 def getPrice(key: String) = {
@@ -56,7 +61,6 @@ order.map {
       (key, value, calculateSubTotal(value, price))
     )
 }
-
 
 //list of subtotals = menu.key * order.key
 

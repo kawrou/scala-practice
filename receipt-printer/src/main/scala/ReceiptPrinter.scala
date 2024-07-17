@@ -50,5 +50,11 @@ class ReceiptPrinter(val cafe: CafeDetails, val order: Map[String, Int] = Map())
 }
 
 class Till(val cafe: CafeDetails) {
-  def show = cafe.prices.map { case (item, price) => s"${item}: $$${price}" }.mkString("\n")
+  def show: String = cafe.prices.map { case (item, price) => s"${item}: $$${price}" }.mkString("\n")
+
+  def order(order: String) = cafe.prices.filter {
+    case (item, price) => item.contains(order)
+  }.map {
+    case (item, order) => s"$item: $$$order"
+  }.headOption.getOrElse("Item not in the menu")
 }
