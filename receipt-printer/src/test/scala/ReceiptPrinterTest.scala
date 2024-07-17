@@ -79,7 +79,19 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
           coffeeConnectionCafe,
           Map("Hot Chocolate" -> 1)
         )
-        printer.receipt should not include("Hot Chocolate")
+        printer.receipt should not include ("Hot Chocolate")
+      }
+    }
+  }
+
+  "A Till" should {
+    "show a menu" that {
+      "contains all the menu items" in {
+        val till = new Till(
+          coffeeConnectionCafe
+        )
+        till.show should include("Cafe Latte: $4.75")
+        till.show should include("Flat White: $4.75")
       }
     }
   }

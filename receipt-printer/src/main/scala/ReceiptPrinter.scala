@@ -48,3 +48,7 @@ class ReceiptPrinter(val cafe: CafeDetails, val order: Map[String, Int] = Map())
        |""".stripMargin
   }
 }
+
+class Till(val cafe: CafeDetails) {
+  def show = cafe.prices.map { case (item, price) => s"${item}: $$${price}" }.mkString("\n")
+}
