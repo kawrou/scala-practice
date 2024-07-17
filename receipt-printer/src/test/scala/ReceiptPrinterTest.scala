@@ -59,7 +59,7 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
       "contains multiple orders" in {
         val printer = new ReceiptPrinter(
           coffeeConnectionCafe,
-          Map("Cafe Latte" -> 2, "Flat White"-> 1, "Muffin Of The Day"->1)
+          Map("Cafe Latte" -> 2, "Flat White" -> 1, "Muffin Of The Day" -> 1)
         )
         printer.receipt should include("Cafe Latte: 2 x 4.75 $9.50")
         printer.receipt should include("Flat White: 1 x 4.75 $4.75")
@@ -69,7 +69,7 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
       "contains the total" in {
         val printer = new ReceiptPrinter(
           coffeeConnectionCafe,
-          Map("Cafe Latte" -> 2, "Flat White"-> 1, "Muffin Of The Day"->1)
+          Map("Cafe Latte" -> 2, "Flat White" -> 1, "Muffin Of The Day" -> 1)
         )
         printer.receipt should include("Total: $18.80")
       }

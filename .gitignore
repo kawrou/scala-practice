@@ -11,6 +11,7 @@ target/
 # SBT-specific directories (excluding build.sbt)
 project/target/
 project/project/
+project/
 
 # Source directory (not typically ignored unless you have generated sources)
 # Uncomment if you have generated sources you want to ignore
