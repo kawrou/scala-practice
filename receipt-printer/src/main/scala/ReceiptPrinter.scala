@@ -70,16 +70,17 @@ class Till(val cafe: CafeDetails) {
   }
 
   def addOrder(items: Map[String, Int]) = {
-    val filteredItems = findItemFromMenu(items)
+    val validMenuItems: Map[String, Int] = findItemFromMenu(items)
 
-    val invalidItems = items.keySet -- filteredItems.keySet
-    handleItemsNotInMenu(invalidItems)
+    val invalidMenuItems: Set[String] = items.keySet -- validMenuItems.keySet
+    handleItemsNotInMenu(invalidMenuItems)
 
-    order ++= filteredItems
+    order ++= validMenuItems
   }
 
   def showOrder = order.map {
-    case (item, quantity) => s"$item: $quantity" }.mkString("")
+    case (item, quantity) => s"$item: $quantity"
+  }.mkString("")
 
   def printReceipt: String = {
     val printer = new ReceiptPrinter(cafe, order)
