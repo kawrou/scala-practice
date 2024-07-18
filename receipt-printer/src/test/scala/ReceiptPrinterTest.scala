@@ -137,17 +137,25 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    //    "return an error message" when{
-    //      "the item doesn't exist in the menu" in {
-    //        val till = new Till(
-    //          coffeeConnectionCafe
-    //        )
-    //        val orderResult = till.order("Hot Chocolate")
-    //        orderResult should include ("Item not in the menu")
-    //      }
+    "throw an error message" when {
+      "the item doesn't exist in the menu" in {
+        val till = new Till(
+          coffeeConnectionCafe
+        )
+        till.addOrder(Map("Cafe Latte" -> 1))
+        val orderResult = till.showOrder
+        orderResult should include("Cafe Latte: 1")
+
+        try {
+          till.addOrder(Map("Hot Chocolate" -> 1)) // Throws IllegalArgumentException
+        } catch {
+          case e: IllegalArgumentException => println(e.getMessage) // Output: Invalid items: Mocha
+        }
+
+      }
+    }
   }
 }
-
 //Description: 'should', 'must', "can",
 //Context and Conditions: "which", "when", "that"
 //Test body: "in"
