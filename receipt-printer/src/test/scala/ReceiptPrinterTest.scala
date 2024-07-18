@@ -26,6 +26,8 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers with MockFactory {
       "Muffin Of The Day" -> 4.55
     )
   )
+  val receiptPrinterMock = mock[ReceiptPrinter]
+
   //Description
   "A ReceiptPrinter" should {
     "format a receipt" which {
@@ -92,9 +94,6 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers with MockFactory {
   "Unit Test: A Till" should {
     "show a menu" that {
       "contains all the menu items" in {
-        val receiptPrinterMock = mock[ReceiptPrinter]
-        //        val receiptPrinter = new ReceiptPrinter(coffeeConnectionCafe)
-
         val till = new Till(
           coffeeConnectionCafe,
           receiptPrinterMock
@@ -106,8 +105,6 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers with MockFactory {
 
     "handle orders" that {
       "contains a single valid item from the menu" in {
-        val receiptPrinterMock = mock[ReceiptPrinter]
-
         val till = new Till(
           coffeeConnectionCafe,
           receiptPrinterMock
@@ -119,8 +116,6 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers with MockFactory {
       }
 
       "contains multiple valid items from the menu" in {
-        val receiptPrinterMock = mock[ReceiptPrinter]
-
         val till = new Till(
           coffeeConnectionCafe,
           receiptPrinterMock
@@ -133,8 +128,6 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers with MockFactory {
       }
 
       "contains multiple orders with valid items form the menu" in {
-        val receiptPrinterMock = mock[ReceiptPrinter]
-
         val till = new Till(
           coffeeConnectionCafe,
           receiptPrinterMock
@@ -150,8 +143,6 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers with MockFactory {
       }
 
       "contains an item that doesn't exist in the menu" in {
-        val receiptPrinterMock = mock[ReceiptPrinter]
-
         val till = new Till(
           coffeeConnectionCafe,
           receiptPrinterMock
@@ -170,7 +161,6 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers with MockFactory {
 
       "print the receipt" when {
         "the order is finalised" in {
-          val receiptPrinterMock = mock[ReceiptPrinter]
           (receiptPrinterMock.printReceipt _).expects(*).returning("" +
             "The Coffee Connection\n" +
             "123 Lakeside Way\n" +

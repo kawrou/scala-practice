@@ -85,8 +85,6 @@ class Till(val cafe: CafeDetails, val receiptPrinter: ReceiptPrinter ) {
   }.mkString("")
 
   def printReceipt: String = {
-//    val printer = new ReceiptPrinter(cafe, order)
-//    printer.receipt
     receiptPrinter.printReceipt(order)
   }
 }
