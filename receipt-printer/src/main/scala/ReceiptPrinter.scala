@@ -57,9 +57,13 @@ class Till(val cafe: CafeDetails) {
   //  var order = Map[String, Int]()
   private var order: Map[String, Int] = Map()
 
-  def showMenu: String = cafe.prices.map { case (item, price) => s"${item}: $$${price}" }.mkString("\n")
+  def showMenu: String = cafe.prices.map {
+    case (item, price) => s"${item}: $$${price}"
+  }.mkString("\n")
 
-  private def findItemFromMenu(order: Map[String, Int]) = order.filter { case (item, _) => cafe.prices.contains(item) }
+  private def findItemFromMenu(order: Map[String, Int]) = order.filter {
+    case (item, _) => cafe.prices.contains(item)
+  }
 
   private def handleItemsNotInMenu(invalidItems: Set[String]) = if (invalidItems.nonEmpty) {
     throw new IllegalArgumentException(s"Invalid items: ${invalidItems.mkString(", ")}")
@@ -74,7 +78,8 @@ class Till(val cafe: CafeDetails) {
     order ++= filteredItems
   }
 
-  def showOrder = order.map { case (item, quantity) => s"$item: $quantity" }.mkString("")
+  def showOrder = order.map {
+    case (item, quantity) => s"$item: $quantity" }.mkString("")
 
   def printReceipt: String = {
     val printer = new ReceiptPrinter(cafe, order)
