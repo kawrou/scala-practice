@@ -146,6 +146,19 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
         }
       }
     }
+    "print the receipt" when {
+      "the order is finalised" in {
+        val till = new Till(
+          coffeeConnectionCafe
+        )
+        till.addOrder(Map("Cafe Latte" ->1, "Cappuccino" -> 1, "Single Espresso" ->2))
+        val receipt = till.printReceipt
+        receipt should include("Cafe Latte: 1 x 4.75 $4.75")
+        receipt should include("Cappuccino: 1 x 3.85 $3.85")
+        receipt should include("Single Espresso: 2 x 2.05 $4.10")
+        receipt should include("Total: $12.7")
+      }
+    }
   }
 }
 //Description: 'should', 'must', "can",

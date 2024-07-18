@@ -76,7 +76,7 @@ class Till(val cafe: CafeDetails) {
 
   def showOrder = order.map { case (item, quantity) => s"$item: $quantity" }.mkString("")
 
-  def printReceipt(): String = {
+  def printReceipt: String = {
     val printer = new ReceiptPrinter(cafe, order)
     printer.receipt
   }
