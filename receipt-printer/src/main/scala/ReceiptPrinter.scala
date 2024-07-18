@@ -13,13 +13,15 @@ class CafeDetails(val shopName: String, val address: String, val phone: String, 
 //Use the value in the menu and multiply it to the value in the order to get total
 //We want to return a string of the order + total
 
-class ReceiptPrinter(val cafe: CafeDetails, val order: Map[String, Int] = Map()) {
+//val order: Map[String, Int] = Map()
+class ReceiptPrinter(val cafe: CafeDetails) {
+  def printReceipt(order: Map[String, Int]): String = receipt(order)
 
   private def formatDecimalPlaces(subtotal: Double): String = {
     f"$subtotal%.2f"
   }
 
-  private def findCostsDetails = {
+  private def findCostsDetails(order: Map[String, Int]) = {
     for {
       key <- order.keys
       quantity <- order.get(key)
@@ -27,24 +29,24 @@ class ReceiptPrinter(val cafe: CafeDetails, val order: Map[String, Int] = Map())
     } yield (key, quantity, price, price * quantity)
   }
 
-  private def formatCostsDetails = findCostsDetails.map {
+  private def formatCostsDetails(order: Map[String, Int]) = findCostsDetails(order).map {
     case (key, quantity, price, subtotal) =>
       s"${key}: ${quantity} x ${price} $$${formatDecimalPlaces(subtotal)}"
   }.mkString("\n")
 
-  private def calculateTotal = findCostsDetails.map {
+  private def calculateTotal(order: Map[String, Int]) = findCostsDetails(order).map {
     case (_, _, _, subtotal) => subtotal
   }.sum
 
-  private def formatTotal = s"Total: $$${formatDecimalPlaces(calculateTotal)}"
+  private def formatTotal(order: Map[String, Int]) = s"Total: $$${formatDecimalPlaces(calculateTotal(order))}"
 
-  def receipt: String = {
+  def receipt(order: Map[String, Int]): String = {
     s"""
        |${cafe.shopName}
        |${cafe.address}
        |${cafe.phone}
-       |${formatCostsDetails}
-       |${formatTotal}
+       |${formatCostsDetails(order)}
+       |${formatTotal(order)}
        |""".stripMargin
   }
 }
@@ -53,7 +55,7 @@ class ReceiptPrinter(val cafe: CafeDetails, val order: Map[String, Int] = Map())
 //I want to add an order to my orders if the item exists on the menu
 //I want to print out a receipt once orders are finalized
 
-class Till(val cafe: CafeDetails) {
+class Till(val cafe: CafeDetails, val receiptPrinter: ReceiptPrinter ) {
   //  var order = Map[String, Int]()
   private var order: Map[String, Int] = Map()
 
@@ -83,7 +85,8 @@ class Till(val cafe: CafeDetails) {
   }.mkString("")
 
   def printReceipt: String = {
-    val printer = new ReceiptPrinter(cafe, order)
-    printer.receipt
+//    val printer = new ReceiptPrinter(cafe, order)
+//    printer.receipt
+    receiptPrinter.printReceipt(order)
   }
 }

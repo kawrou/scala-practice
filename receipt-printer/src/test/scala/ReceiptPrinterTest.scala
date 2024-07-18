@@ -1,7 +1,9 @@
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalamock.scalatest.MockFactory
+//import org.mockito.MockitoSugar._
 
-class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
+class ReceiptPrinterSpec extends AnyWordSpec with Matchers with MockFactory {
   val coffeeConnectionCafe = new CafeDetails(
     "The Coffee Connection",
     "123 Lakeside Way",
@@ -32,63 +34,70 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
         //Test body: Create an instance
         val printer = new ReceiptPrinter(
           coffeeConnectionCafe,
-          Map("Cafe Latte" -> 1)
         )
+
+        val receipt = printer.printReceipt(Map("Cafe Latte" -> 1))
         //Assertions
-        printer.receipt should include("The Coffee Connection")
-        printer.receipt should include("123 Lakeside Way")
-        printer.receipt should include("16503600708")
+        receipt should include("The Coffee Connection")
+        receipt should include("123 Lakeside Way")
+        receipt should include("16503600708")
       }
 
       "contains the ordered item, quantity, and subtotal for 1 Cafe Latte" in {
         val printer = new ReceiptPrinter(
           coffeeConnectionCafe,
-          Map("Cafe Latte" -> 1)
         )
-        printer.receipt should include("Cafe Latte: 1 x 4.75 $4.75")
+        val receipt = printer.printReceipt(Map("Cafe Latte" -> 1))
+        receipt should include("Cafe Latte: 1 x 4.75 $4.75")
       }
 
       "contains the order item, quanitity and subtotal for 2 Cafe Lattes" in {
         val printer = new ReceiptPrinter(
           coffeeConnectionCafe,
-          Map("Cafe Latte" -> 2)
         )
-        printer.receipt should include("Cafe Latte: 2 x 4.75 $9.50")
+        val receipt = printer.printReceipt(Map("Cafe Latte" -> 2))
+        receipt should include("Cafe Latte: 2 x 4.75 $9.50")
       }
 
       "contains multiple orders" in {
         val printer = new ReceiptPrinter(
           coffeeConnectionCafe,
-          Map("Cafe Latte" -> 2, "Flat White" -> 1, "Muffin Of The Day" -> 1)
+
         )
-        printer.receipt should include("Cafe Latte: 2 x 4.75 $9.50")
-        printer.receipt should include("Flat White: 1 x 4.75 $4.75")
-        printer.receipt should include("Muffin Of The Day: 1 x 4.55 $4.55")
+        val receipt = printer.printReceipt(Map("Cafe Latte" -> 2, "Flat White" -> 1, "Muffin Of The Day" -> 1))
+        receipt should include("Cafe Latte: 2 x 4.75 $9.50")
+        receipt should include("Flat White: 1 x 4.75 $4.75")
+        receipt should include("Muffin Of The Day: 1 x 4.55 $4.55")
       }
 
       "contains the total" in {
         val printer = new ReceiptPrinter(
           coffeeConnectionCafe,
-          Map("Cafe Latte" -> 2, "Flat White" -> 1, "Muffin Of The Day" -> 1)
         )
-        printer.receipt should include("Total: $18.80")
+        val receipt = printer.printReceipt(Map("Cafe Latte" -> 2, "Flat White" -> 1, "Muffin Of The Day" -> 1))
+        receipt should include("Total: $18.80")
       }
 
       "doesn't have the order item in the menu" in {
         val printer = new ReceiptPrinter(
           coffeeConnectionCafe,
-          Map("Hot Chocolate" -> 1)
         )
-        printer.receipt should not include ("Hot Chocolate")
+        val receipt = printer.printReceipt(Map("Hot Chocolate" -> 1))
+        receipt should not include ("Hot Chocolate")
       }
     }
   }
 
-  "A Till" should {
+  //Till - Unit test
+  "Unit Test: A Till" should {
     "show a menu" that {
       "contains all the menu items" in {
+        val receiptPrinterMock = mock[ReceiptPrinter]
+        //        val receiptPrinter = new ReceiptPrinter(coffeeConnectionCafe)
+
         val till = new Till(
-          coffeeConnectionCafe
+          coffeeConnectionCafe,
+          receiptPrinterMock
         )
         till.showMenu should include("Cafe Latte: $4.75")
         till.showMenu should include("Flat White: $4.75")
@@ -97,8 +106,11 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
 
     "handle orders" that {
       "contains a single valid item from the menu" in {
+        val receiptPrinterMock = mock[ReceiptPrinter]
+
         val till = new Till(
-          coffeeConnectionCafe
+          coffeeConnectionCafe,
+          receiptPrinterMock
         )
 
         till.addOrder(Map("Cafe Latte" -> 1))
@@ -107,8 +119,11 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
       }
 
       "contains multiple valid items from the menu" in {
+        val receiptPrinterMock = mock[ReceiptPrinter]
+
         val till = new Till(
-          coffeeConnectionCafe
+          coffeeConnectionCafe,
+          receiptPrinterMock
         )
 
         till.addOrder(Map("Cafe Latte" -> 1, "Cappuccino" -> 1))
@@ -118,8 +133,11 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
       }
 
       "contains multiple orders with valid items form the menu" in {
+        val receiptPrinterMock = mock[ReceiptPrinter]
+
         val till = new Till(
-          coffeeConnectionCafe
+          coffeeConnectionCafe,
+          receiptPrinterMock
         )
 
         till.addOrder(Map("Cafe Latte" -> 1, "Cappuccino" -> 1))
@@ -132,9 +150,118 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
       }
 
       "contains an item that doesn't exist in the menu" in {
+        val receiptPrinterMock = mock[ReceiptPrinter]
+
         val till = new Till(
-          coffeeConnectionCafe
+          coffeeConnectionCafe,
+          receiptPrinterMock
         )
+
+        till.addOrder(Map("Cafe Latte" -> 1))
+        val orderResult = till.showOrder
+        orderResult should include("Cafe Latte: 1")
+
+        try {
+          till.addOrder(Map("Hot Chocolate" -> 1)) // Throws IllegalArgumentException
+        } catch {
+          case e: IllegalArgumentException => println(e.getMessage) // Output: Invalid items: Mocha
+        }
+      }
+
+      "print the receipt" when {
+        "the order is finalised" in {
+          val receiptPrinterMock = mock[ReceiptPrinter]
+          (receiptPrinterMock.printReceipt _).expects(*).returning("" +
+            "The Coffee Connection\n" +
+            "123 Lakeside Way\n" +
+            "16503600708\n" +
+            "2 x Flat White 9.50\n" +
+            "1 x Cafe Latte 4.50\n" +
+            "Total: $23.50"
+          )
+          //        when(receiptPrinterMock.printReceipt).thenReturn(
+          //          "The Coffee Connection\n123 Lakeside Way\n16503600708\n2 x Flat White 9.50\n1 x Cafe Latte 4.50\n"
+          //        )
+
+          val till = new Till(
+            coffeeConnectionCafe,
+            receiptPrinterMock
+          )
+          val receipt = till.printReceipt
+          receipt should include("The Coffee Connection\n123 Lakeside Way\n16503600708\n2 x Flat White 9.50\n1 x Cafe Latte 4.50\n")
+        }
+      }
+    }
+  }
+
+  // Till | Receipt Printer - Integration test
+  "Integration Test: A Till" should {
+    "show a menu" that {
+      "contains all the menu items" in {
+        val receiptPrinter = new ReceiptPrinter(coffeeConnectionCafe)
+
+        val till = new Till(
+          coffeeConnectionCafe,
+          receiptPrinter
+        )
+        till.showMenu should include("Cafe Latte: $4.75")
+        till.showMenu should include("Flat White: $4.75")
+      }
+    }
+
+    "handle orders" that {
+      "contains a single valid item from the menu" in {
+        val receiptPrinter = new ReceiptPrinter(coffeeConnectionCafe)
+
+        val till = new Till(
+          coffeeConnectionCafe,
+          receiptPrinter
+        )
+
+        till.addOrder(Map("Cafe Latte" -> 1))
+        val orderResult = till.showOrder
+        orderResult should include("Cafe Latte: 1")
+      }
+
+      "contains multiple valid items from the menu" in {
+        val receiptPrinter = new ReceiptPrinter(coffeeConnectionCafe)
+
+        val till = new Till(
+          coffeeConnectionCafe,
+          receiptPrinter
+        )
+
+        till.addOrder(Map("Cafe Latte" -> 1, "Cappuccino" -> 1))
+        val orderResult = till.showOrder
+        orderResult should include("Cafe Latte: 1")
+        orderResult should include("Cappuccino: 1")
+      }
+
+      "contains multiple orders with valid items form the menu" in {
+        val receiptPrinter = new ReceiptPrinter(coffeeConnectionCafe)
+
+        val till = new Till(
+          coffeeConnectionCafe,
+          receiptPrinter
+        )
+
+        till.addOrder(Map("Cafe Latte" -> 1, "Cappuccino" -> 1))
+        till.addOrder(Map("Single Espresso" -> 1, "Double Espresso" -> 1))
+        val orderResult = till.showOrder
+        orderResult should include("Cafe Latte: 1")
+        orderResult should include("Cappuccino: 1")
+        orderResult should include("Single Espresso: 1")
+        orderResult should include("Double Espresso: 1")
+      }
+
+      "contains an item that doesn't exist in the menu" in {
+        val receiptPrinter = new ReceiptPrinter(coffeeConnectionCafe)
+
+        val till = new Till(
+          coffeeConnectionCafe,
+          receiptPrinter
+        )
+
         till.addOrder(Map("Cafe Latte" -> 1))
         val orderResult = till.showOrder
         orderResult should include("Cafe Latte: 1")
@@ -146,12 +273,17 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
         }
       }
     }
+
     "print the receipt" when {
       "the order is finalised" in {
+        val receiptPrinter = new ReceiptPrinter(coffeeConnectionCafe)
+
         val till = new Till(
-          coffeeConnectionCafe
+          coffeeConnectionCafe,
+          receiptPrinter
         )
-        till.addOrder(Map("Cafe Latte" ->1, "Cappuccino" -> 1, "Single Espresso" ->2))
+
+        till.addOrder(Map("Cafe Latte" -> 1, "Cappuccino" -> 1, "Single Espresso" -> 2))
         val receipt = till.printReceipt
         receipt should include("Cafe Latte: 1 x 4.75 $4.75")
         receipt should include("Cappuccino: 1 x 3.85 $3.85")
