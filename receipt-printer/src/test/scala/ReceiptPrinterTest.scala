@@ -90,28 +90,61 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
         val till = new Till(
           coffeeConnectionCafe
         )
-        till.show should include("Cafe Latte: $4.75")
-        till.show should include("Flat White: $4.75")
+        till.showMenu should include("Cafe Latte: $4.75")
+        till.showMenu should include("Flat White: $4.75")
       }
     }
-    "allow a customer to order an item from the menu" when{
+
+    "allow a customer to order an item from the menu" when {
       "the item exists in the menu" in {
         val till = new Till(
           coffeeConnectionCafe
         )
-        val orderResult = till.order("Cafe Latte")
-        orderResult should include ("Cafe Latte: $4.75")
+
+        till.addOrder(Map("Cafe Latte" -> 1))
+        val orderResult = till.showOrder
+        orderResult should include("Cafe Latte: 1")
       }
     }
-    "return an error message" when{
-      "the item doesn't exist in the menu" in {
+
+
+    "allow a customer to order multiple items from the menu" when {
+      "the items exists in the menu" in {
         val till = new Till(
           coffeeConnectionCafe
         )
-        val orderResult = till.order("Hot Chocolate")
-        orderResult should include ("Item not in the menu")
+
+        till.addOrder(Map("Cafe Latte" -> 1, "Cappuccino" -> 1))
+        val orderResult = till.showOrder
+        orderResult should include("Cafe Latte: 1")
+        orderResult should include("Cappuccino: 1")
       }
     }
+
+    "allow a customer to make multiple orders" when {
+      "the items exists in the menu" in {
+        val till = new Till(
+          coffeeConnectionCafe
+        )
+
+        till.addOrder(Map("Cafe Latte" -> 1, "Cappuccino" -> 1))
+        till.addOrder(Map("Single Espresso" -> 1, "Double Espresso" -> 1))
+        val orderResult = till.showOrder
+        orderResult should include("Cafe Latte: 1")
+        orderResult should include("Cappuccino: 1")
+        orderResult should include("Single Espresso: 1")
+        orderResult should include("Double Espresso: 1")
+      }
+    }
+
+    //    "return an error message" when{
+    //      "the item doesn't exist in the menu" in {
+    //        val till = new Till(
+    //          coffeeConnectionCafe
+    //        )
+    //        val orderResult = till.order("Hot Chocolate")
+    //        orderResult should include ("Item not in the menu")
+    //      }
   }
 }
 

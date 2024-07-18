@@ -49,12 +49,35 @@ class ReceiptPrinter(val cafe: CafeDetails, val order: Map[String, Int] = Map())
   }
 }
 
-class Till(val cafe: CafeDetails) {
-  def show: String = cafe.prices.map { case (item, price) => s"${item}: $$${price}" }.mkString("\n")
+//I want to return a menu
+//I want to add an order to my orders if the item exists on the menu
+//I want to print out a receipt once orders are finalized
 
-  def order(order: String) = cafe.prices.filter {
-    case (item, price) => item.contains(order)
-  }.map {
-    case (item, order) => s"$item: $$$order"
-  }.headOption.getOrElse("Item not in the menu")
+class Till(val cafe: CafeDetails) {
+  //  var order = Map[String, Int]()
+  private var order: Map[String, Int] = Map()
+
+  def showMenu: String = cafe.prices.map { case (item, price) => s"${item}: $$${price}" }.mkString("\n")
+
+  private def findItemFromMenu(order: Map[String, Int]) = order.filter { case (item, _) => cafe.prices.contains(item) }
+
+  private def handleItemsNotInMenu(invalidItems: Set[String]) = if (invalidItems.nonEmpty) {
+    throw new IllegalArgumentException(s"Invalid items: ${invalidItems.mkString(", ")}")
+  }
+
+  def addOrder(items: Map[String, Int]) = {
+    val filteredItems = findItemFromMenu(items)
+
+    val invalidItems = items.keySet -- filteredItems.keySet
+    handleItemsNotInMenu(invalidItems)
+
+    order ++= filteredItems
+  }
+
+  def showOrder = order.map { case (item, quantity) => s"$item: $quantity" }.mkString("")
+
+  def printReceipt(): String = {
+    val printer = new ReceiptPrinter(cafe, order)
+    printer.receipt
+  }
 }
