@@ -95,8 +95,8 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    "allow a customer to order an item from the menu" when {
-      "the item exists in the menu" in {
+    "handle orders" that {
+      "contains a single valid item from the menu" in {
         val till = new Till(
           coffeeConnectionCafe
         )
@@ -105,11 +105,8 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
         val orderResult = till.showOrder
         orderResult should include("Cafe Latte: 1")
       }
-    }
 
-
-    "allow a customer to order multiple items from the menu" when {
-      "the items exists in the menu" in {
+      "contains multiple valid items from the menu" in {
         val till = new Till(
           coffeeConnectionCafe
         )
@@ -119,10 +116,8 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
         orderResult should include("Cafe Latte: 1")
         orderResult should include("Cappuccino: 1")
       }
-    }
 
-    "allow a customer to make multiple orders" when {
-      "the items exists in the menu" in {
+      "contains multiple orders with valid items form the menu" in {
         val till = new Till(
           coffeeConnectionCafe
         )
@@ -135,10 +130,8 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
         orderResult should include("Single Espresso: 1")
         orderResult should include("Double Espresso: 1")
       }
-    }
 
-    "throw an error message" when {
-      "the item doesn't exist in the menu" in {
+      "contains an item that doesn't exist in the menu" in {
         val till = new Till(
           coffeeConnectionCafe
         )
@@ -151,7 +144,6 @@ class ReceiptPrinterSpec extends AnyWordSpec with Matchers {
         } catch {
           case e: IllegalArgumentException => println(e.getMessage) // Output: Invalid items: Mocha
         }
-
       }
     }
   }
